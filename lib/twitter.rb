@@ -39,14 +39,37 @@ def user_info(options)
   end
 end
 
+def user_location(user)
+  user["location"] == "" ? "Unknown" : user["location"]
+end
+
+def user_name(user)
+  "#{user["screen_name"]} (A.k.a #{user["name"]})"
+end
+
+def user_description(user)
+  user["description"] != "" ? "\n#{user["description"]}\n" : ""
+end
+
+def present_short_user(user)
+    ("-"*10) + "\n" +
+    "#{user_name(user)} - #{user_location(user)}\n" +
+    user_description(user)
+end
+
 def followers(options)
   username = options.first
   response = request("followers/list", { :screen_name => username })
   response["users"].map do |user|
-    ("-"*10) + "\n" +
-    "#{user["screen_name"]} - (#{user["name"]})\n" +
-    "#{user["location"]}\n\n" +
-    "#{user["description"]}\n"
+    present_short_user(user)
+  end
+end
+
+def following(options)
+  username = options.first
+  response = request("friends/list", { :screen_name => username })
+  response["users"].map do |user|
+    present_short_user(user)
   end
 end
 
@@ -57,9 +80,9 @@ def twitter_app(command, options)
     return user_info(options)
   elsif command == "followers"
     return followers(options)
+  elsif command == "following"
+    return following(options)
   else
     return ["We couldn't execute #{command} #{options.join(" ")}"]
   end
-
-
 end

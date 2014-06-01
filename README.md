@@ -21,3 +21,4 @@ twitter-client
 1. `./twitter timeline <twitter-handle>`
 1. `./twitter user_info <twitter-handle>`
 1. `./twitter followers <twitter-handle>`
+1. `./twitter following <twitter-handle>`
