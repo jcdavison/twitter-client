@@ -69,6 +69,13 @@ def update(options)
   ["Successfully tweeted '#{tweet}'"]
 end
 
+def message(options)
+  user = options.shift
+  message = options.join(" ")
+  response = post("direct_messages/new", { :screen_name => user, :text => message })
+  ["Successfully messaged #{user}"]
+end
+
 def twitter_app(command, options)
   if command == "timeline"
     return timeline(options)
@@ -80,6 +87,8 @@ def twitter_app(command, options)
     return following(options)
   elsif command == "update"
     return update(options)
+  elsif command == "message"
+    return message(options)
   else
     return ["We couldn't execute #{command} #{options.join(" ")}"]
   end

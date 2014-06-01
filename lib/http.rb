@@ -30,4 +30,3 @@ end
 def get(path, params)
   request(:get, path, params)
 end
-
