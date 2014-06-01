@@ -1,0 +1,13 @@
+#!/usr/bin/env ruby
+
+CONSUMER_KEY=""
+CONSUMER_SECRET=""
+
+require_relative "lib/twitter"
+
+command = ARGV.shift
+lines =  twitter_app(command, ARGV)
+
+lines.each do |line|
+  puts line
+end
