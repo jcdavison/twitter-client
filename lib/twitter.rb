@@ -2,24 +2,7 @@ require 'excon'
 require 'simple_oauth'
 require 'json'
 require 'date'
-
-def get(path, params)
-  header = SimpleOAuth::Header.new(:get, "https://api.twitter.com/1.1/#{path}.json", params, { :consumer_key => CONSUMER_KEY, :consumer_secret => CONSUMER_SECRET })
-
-  response = Excon.get("https://api.twitter.com/1.1/#{path}.json", {
-    :query => params,
-    :headers => { "Authorization" => header.to_s }
-  })
-
-  parsed_response = JSON.parse(response.body)
-  if parsed_response["errors"]
-    errors = parsed_response["errors"].map do |error|
-      "  * #{error["message"]}"
-    end.join("\n")
-    raise "\nRequest for #{path} with params #{params} failed for the following reasons:\n #{errors}"
-  end
-  parsed_response
-end
+require_relative 'http'
 
 def timeline(options)
   username = options.first
@@ -80,6 +63,12 @@ def following(options)
   end
 end
 
+def update(options)
+  tweet = options.join(" ")
+  response = post("statuses/update", { :status => tweet })
+  ["Successfully tweeted '#{tweet}'"]
+end
+
 def twitter_app(command, options)
   if command == "timeline"
     return timeline(options)
@@ -89,6 +78,8 @@ def twitter_app(command, options)
     return followers(options)
   elsif command == "following"
     return following(options)
+  elsif command == "update"
+    return update(options)
   else
     return ["We couldn't execute #{command} #{options.join(" ")}"]
   end
