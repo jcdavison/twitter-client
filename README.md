@@ -19,3 +19,4 @@ twitter-client
 ## Commands
 
 1. `./twitter timeline <twitter-handle>`
+1. `./twitter user_info <twitter-handle>`
