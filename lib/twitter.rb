@@ -3,7 +3,7 @@ require 'simple_oauth'
 require 'json'
 require 'date'
 
-def request(path, params)
+def get(path, params)
   header = SimpleOAuth::Header.new(:get, "https://api.twitter.com/1.1/#{path}.json", params, { :consumer_key => CONSUMER_KEY, :consumer_secret => CONSUMER_SECRET })
 
   response = Excon.get("https://api.twitter.com/1.1/#{path}.json", {
@@ -11,12 +11,19 @@ def request(path, params)
     :headers => { "Authorization" => header.to_s }
   })
 
-  JSON.parse(response.body)
+  parsed_response = JSON.parse(response.body)
+  if parsed_response["errors"]
+    errors = parsed_response["errors"].map do |error|
+      "  * #{error["message"]}"
+    end.join("\n")
+    raise "\nRequest for #{path} with params #{params} failed for the following reasons:\n #{errors}"
+  end
+  parsed_response
 end
 
 def timeline(options)
   username = options.first
-  response = request("statuses/user_timeline", { :screen_name => username })
+  response = get("statuses/user_timeline", { :screen_name => username })
   response.map do |tweet|
     "@#{tweet["user"]["screen_name"]} - #{tweet["text"]}"
   end
@@ -25,7 +32,7 @@ end
 
 def user_info(options)
   username = options.first
-  response = request("users/show", { :screen_name => username })
+  response = get("users/show", { :screen_name => username })
   pertinent_data = {
     "Name" => response["name"],
     "Description" => response["description"],
@@ -59,7 +66,7 @@ end
 
 def followers(options)
   username = options.first
-  response = request("followers/list", { :screen_name => username })
+  response = get("followers/list", { :screen_name => username })
   response["users"].map do |user|
     present_short_user(user)
   end
@@ -67,7 +74,7 @@ end
 
 def following(options)
   username = options.first
-  response = request("friends/list", { :screen_name => username })
+  response = get("friends/list", { :screen_name => username })
   response["users"].map do |user|
     present_short_user(user)
   end
