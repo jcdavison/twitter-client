@@ -76,6 +76,18 @@ def message(options)
   ["Successfully messaged #{user}"]
 end
 
+def follow(options)
+  user = options.first
+  response = post("friendships/create", { :screen_name => user })
+  ["Successfully followed #{user}"]
+end
+
+def unfollow(options)
+  user = options.first
+  response = post("friendships/destroy", { :screen_name => user })
+  ["Successfully unfollowed #{user}"]
+end
+
 def twitter_app(command, options)
   if command == "timeline"
     return timeline(options)
@@ -89,6 +101,10 @@ def twitter_app(command, options)
     return update(options)
   elsif command == "message"
     return message(options)
+  elsif command =="follow"
+    return follow(options)
+  elsif command =="unfollow"
+    return unfollow(options)
   else
     return ["We couldn't execute #{command} #{options.join(" ")}"]
   end

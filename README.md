@@ -28,3 +28,5 @@ twitter-client
 1. `./twitter following <twitter-handle>`
 1. `./twitter update <tweet>`
 1. `./twitter message <twitter-handle> <status>`
+1. `./twitter follow <twitter-handle>`
+1. `./twitter unfollow <twitter-handle>`
